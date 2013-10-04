@@ -1,4 +1,4 @@
-""" Simple gui to access pastebin.com """
+''' Simple gui to access pastebin.com '''
     
 from pastebin_python import PastebinPython
 from pastebin_python.pastebin_exceptions import PastebinBadRequestException, PastebinFileException
@@ -6,11 +6,14 @@ from pastebin_python.pastebin_constants import PASTE_PUBLIC, EXPIRE_1_MONTH
 from pastebin_python.pastebin_formats import FORMAT_NONE
 
 from Tkinter import *
-API_KEY = '###### YOUR API KEY #########'
+import tkMessageBox
+
+API_KEY = '### PASETBIN API KEY ###'
 
 class pastebinGUI:
     
     def __init__(self,root):
+        self.root = root
         frame=Frame(root)
         self.makeMenuBar(frame)
         self.createTitleTextArea(frame)
@@ -48,7 +51,10 @@ class pastebinGUI:
         content = self.contentArea.get('1.0',END)
         pbin = PastebinPython(api_dev_key=API_KEY)
         try:
-            print pbin.createPaste(content, self.title.get(), FORMAT_NONE, PASTE_PUBLIC, EXPIRE_1_MONTH)
+            url = pbin.createPaste(content, self.title.get(), FORMAT_NONE, PASTE_PUBLIC, EXPIRE_1_MONTH)
+            tkMessageBox.showinfo('URL saved to clipboard', url)
+            self.root.clipboard_clear()
+            self.root.clipboard_append(url)
         except PastebinBadRequestException as e:
             print e.message
         except PastebinFileException as e:
